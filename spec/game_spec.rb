@@ -33,4 +33,14 @@ RSpec.describe Game do
       expect(game.play).to eq(:finished)
     end
   end
+
+  describe "#switch_player" do
+    it "switches current player" do
+      expect(game.instance_variable_get(:@current_player)).to eq(player1)
+      game.send(:switch_player)
+      expect(game.instance_variable_get(:@current_player)).to eq(player2)
+      game.send(:switch_player)
+      expect(game.instance_variable_get(:@current_player)).to eq(player1)
+    end
+  end
 end
