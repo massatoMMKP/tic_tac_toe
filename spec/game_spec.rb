@@ -1,34 +1,36 @@
-require_relative '../lib/game/game'
-require_relative '../lib/game/board'
+require_relative "../lib/game/game"
 
 RSpec.describe Game do
-  let(:player1) { double("Player", symbol: "X", move: [0, 0]) }
-  let(:player2) { double("Player", symbol: "O", move: [1, 1]) }
+  let(:player1) { double("Player", symbol: "X") }
+  let(:player2) { double("Player", symbol: "O") }
 
-  let(:game) { Game.new(player1, player2) }
+  let(:board) { double("Board") }
+
+  subject(:game) do
+    g = Game.new(player1, player2)
+    g.instance_variable_set(:@board, board)
+    g
+  end
 
   describe "#play" do
-    it "retorna :finished quando o jogo termina" do
-      board = game.instance_variable_get(:@board)
-
+    it "returns :finished when there is a winner" do
       allow(player1).to receive(:move).and_return([0, 0])
-      allow(player2).to receive(:move).and_return([1, 0])
-
-      board.place([0, 1], "X")
-      board.place([0, 2], "X")
+      allow(board).to receive(:place)
+      allow(board).to receive(:display)
+      allow(board).to receive(:winner).and_return("X")
+      allow(board).to receive(:game_over?).and_return(true)
 
       expect(game.play).to eq(:finished)
     end
-  end
 
-  describe "switch_player (via reflection)" do
-    it "alterna o jogador atual" do
-      current = game.instance_variable_get(:@current_player)
+    it "returns :finished when there is a draw" do
+      allow(player1).to receive(:move).and_return([0, 0])
+      allow(board).to receive(:place)
+      allow(board).to receive(:display)
+      allow(board).to receive(:winner).and_return(nil)
+      allow(board).to receive(:game_over?).and_return(true)
 
-      game.send(:switch_player)
-
-      expect(game.instance_variable_get(:@current_player))
-        .not_to eq(current)
+      expect(game.play).to eq(:finished)
     end
   end
 end

@@ -9,9 +9,7 @@ class ComputerPlayer < Player
       copy.place(position, @symbol)
 
       score = -negamax(copy, opponent_symbol(@symbol))
-
-      puts "Jogada #{position} tem score #{score}"
-
+      
       if score > best_score
         best_score = score
         best_move = position

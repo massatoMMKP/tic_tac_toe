@@ -3,19 +3,27 @@ require_relative "player"
 class HumanPlayer < Player
   def move(board)
     loop do
-      puts "Digite linha e coluna (ex: 1 2) ou 'r' para reiniciar, 'q' para sair:"
-      input = gets.chomp.downcase
+      print "Digite linha e coluna (ex: 1 2) ou 'r' para reiniciar, 'q' para sair: "
+      input = gets.chomp.strip
 
-      throw :restart if input == "r"
-      throw :exit if input == "q"
+      throw :exit if input.downcase == 'q'
+      throw :restart if input.downcase == 'r'
 
-      row, col = input.split.map(&:to_i)
+      parts = input.split
 
-      position = [row, col]
+      unless parts.size == 2 && parts.all? { |p| p.match?(/^\d+$/) }
+        puts "Entrada inválida. Digite dois números."
+        next
+      end
 
-      return position if board.valid_move?(position)
+      row, col = parts.map(&:to_i)
 
-      puts "Movimento inválido."
+      unless board.valid_move?([row, col])
+        puts "Movimento inválido."
+        next
+      end
+
+      return [row, col]
     end
   end
 end
